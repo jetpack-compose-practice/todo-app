@@ -2,6 +2,7 @@ package com.piyushprajpti.todo_app.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,34 +25,18 @@ import androidx.compose.ui.unit.sp
 fun AddNoteButton(
     modifier: Modifier = Modifier
 ) {
-//    Box(
-//        contentAlignment = Alignment.Center,
-//        modifier = modifier
-//            .clickable { }
-//            .clip(RoundedCornerShape(10.dp))
-//            .background(Color(0xFF2563EB), RoundedCornerShape(10.dp))
-//            .padding(15.dp)
-//    ) {
-//        Icon(
-//            imageVector = Icons.Default.Add,
-//            contentDescription = "Add note",
-////            tint = Color.Black,
-//            modifier = Modifier.size(30.dp)
-//        )
-//
-//    }
-
     FloatingActionButton(
         onClick = { /*TODO*/ },
         modifier = Modifier
-        .padding(10.dp)
-            .size(65.dp),
+            .padding(15.dp)
+            .size(60.dp),
         shape = RoundedCornerShape(12.dp),
         containerColor = MaterialTheme.colorScheme.primary,
         content = {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Add note",
+                tint = if (isSystemInDarkTheme()) Color.Black else Color.White,
                 modifier = Modifier
                     .size(35.dp)
             )

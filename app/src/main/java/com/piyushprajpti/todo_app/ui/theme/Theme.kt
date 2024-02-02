@@ -19,15 +19,15 @@ import androidx.core.view.WindowCompat
 private val DarkColorScheme = darkColorScheme(
     primary = Color(0xFF2563EB),
     onPrimary = Color(0xFF457AED),
-    secondary = Color(0xFF374151),
+    secondary = Color(0xFFC2C2C2),
     tertiary = Color.White,
-    background = Color(0xFF131313)
+    background = Color(0xFF131313),
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF2563EB),
     onPrimary = Color(0xFF457AED),
-    secondary = Color(0xFFF2F2F2),
+    secondary = Color(0xFF666666),
     background = Color(0xFFF2F2F2)
 )
 
@@ -35,7 +35,7 @@ private val LightColorScheme = lightColorScheme(
 fun TodoappTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
