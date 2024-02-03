@@ -9,7 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.piyushprajpti.todo_app.R
+import com.piyushprajpti.todo_app.Screen
 import com.piyushprajpti.todo_app.components.AddNoteButton
 import com.piyushprajpti.todo_app.components.TopBar
 
@@ -24,8 +28,8 @@ fun HomeScreen() {
 
         floatingActionButtonPosition = FabPosition.End,
 
-    ) { paddingValue ->
+        ) { paddingValue ->
         Divider(thickness = .5.dp, modifier = Modifier.padding(paddingValue))
-        LoginScreen(modifier = Modifier.padding(paddingValue))
+
     }
 }

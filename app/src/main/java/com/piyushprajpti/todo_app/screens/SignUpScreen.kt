@@ -18,17 +18,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.piyushprajpti.todo_app.Screen
 import com.piyushprajpti.todo_app.components.ActionButton
 import com.piyushprajpti.todo_app.components.AlternateAction
 import com.piyushprajpti.todo_app.components.InputField
 
 @Composable
-fun SignUpScreen(modifier: Modifier = Modifier) {
+fun SignUpScreen(onLoginClick: () -> Unit, modifier: Modifier = Modifier) {
+
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(15.dp),
     ) {
+        Spacer(modifier = Modifier.height(50.dp))
+
         Text(
             text = "Create New Account",
             fontSize = 26.sp,
@@ -59,8 +66,11 @@ fun SignUpScreen(modifier: Modifier = Modifier) {
             keyboardType = KeyboardType.Password
         )
 
-        ActionButton(text = "Sign Up")
+        ActionButton(text = "Sign Up", clickAction = {})
 
-        AlternateAction(text1 = "Already have an Account?", text2 = "Login")
+        AlternateAction(
+            text1 = "Already have an Account?",
+            text2 = "Login",
+            clickAction = { onLoginClick() })
     }
 }

@@ -1,5 +1,6 @@
 package com.piyushprajpti.todo_app.screens
 
+import android.service.autofill.OnClickAction
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,18 +20,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
+import com.piyushprajpti.todo_app.Screen
 import com.piyushprajpti.todo_app.components.ActionButton
 import com.piyushprajpti.todo_app.components.AlternateAction
 import com.piyushprajpti.todo_app.components.InputField
 import com.piyushprajpti.todo_app.ui.theme.GrayColor
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun LoginScreen(onSignupClick: () -> Unit, modifier: Modifier = Modifier) {
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(15.dp),
     ) {
+        Spacer(modifier = Modifier.height(50.dp))
+
         Text(
             text = "Welcome Back",
             fontSize = 26.sp,
@@ -51,13 +57,17 @@ fun LoginScreen(modifier: Modifier = Modifier) {
             keyboardType = KeyboardType.Email
         )
         InputField(
-            logo = Icons.Default.Lock ,
+            logo = Icons.Default.Lock,
             placeholder = "Password",
             keyboardType = KeyboardType.Password
         )
 
-        ActionButton(text = "Log In")
+        ActionButton(text = "Log In", clickAction = {})
 
-        AlternateAction(text1 = "Don't have an Account?", text2 = "Sign Up Now")
+        AlternateAction(
+            text1 = "Don't have an Account?",
+            text2 = "Sign Up Now",
+            clickAction = { onSignupClick() }
+        )
     }
 }

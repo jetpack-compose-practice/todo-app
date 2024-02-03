@@ -20,7 +20,8 @@ import com.piyushprajpti.todo_app.ui.theme.PrimaryColor
 
 @Composable
 fun ActionButton(
-    text: String
+    text: String,
+    clickAction: () -> Unit
 ) {
     Text(
         text = text,
@@ -34,6 +35,6 @@ fun ActionButton(
             .clip(RoundedCornerShape(10.dp))
             .background(PrimaryColor)
             .padding(vertical = 10.dp)
-            .clickable {  }
+            .clickable { clickAction() }
     )
 }
