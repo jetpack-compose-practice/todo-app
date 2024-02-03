@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.piyushprajpti.todo_app.R
 import com.piyushprajpti.todo_app.Screen
 import com.piyushprajpti.todo_app.components.AddNoteButton
+import com.piyushprajpti.todo_app.components.DefaultHomeScreenMsg
 import com.piyushprajpti.todo_app.components.TopBar
 
 @Preview
@@ -31,5 +32,6 @@ fun HomeScreen() {
         ) { paddingValue ->
         Divider(thickness = .5.dp, modifier = Modifier.padding(paddingValue))
 
+        DefaultHomeScreenMsg(modifier = Modifier.padding(paddingValue))
     }
 }
