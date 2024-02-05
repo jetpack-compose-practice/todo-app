@@ -46,7 +46,7 @@ fun DefaultHomeScreenMsg(modifier: Modifier = Modifier) {
             color = GrayColor,
             textAlign = TextAlign.Center,
             fontSize = 18.sp,
-            modifier = Modifier.padding(horizontal = 25.dp, vertical = 222.dp)
+            modifier = Modifier.padding(horizontal = 15.dp, vertical = 222.dp)
         )
     }
 }

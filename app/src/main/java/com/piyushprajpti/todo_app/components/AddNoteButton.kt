@@ -23,10 +23,10 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun AddNoteButton(
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     FloatingActionButton(
-        onClick = { /*TODO*/ },
+        onClick = { onClick() },
         modifier = Modifier
             .padding(15.dp)
             .size(60.dp),

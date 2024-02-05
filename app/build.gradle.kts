@@ -71,4 +71,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
+    implementation("io.ktor:ktor-client-core:2.3.8")
+    implementation("io.ktor:ktor-client-android:2.3.8")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }
