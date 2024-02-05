@@ -2,6 +2,7 @@ package com.piyushprajpti.todo_app
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,37 +16,44 @@ import com.piyushprajpti.todo_app.screens.ProfileScreen
 import com.piyushprajpti.todo_app.screens.SignUpScreen
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.header
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 fun TodoApp() {
     val navController = rememberNavController()
+    val coroutine = rememberCoroutineScope()
 
     val client = HttpClient(Android)
 
     val url = "http://localhost:8080"
 
-    LaunchedEffect(Unit) {
-
-        val output = client.post(url) {
-            header("Content-Type", "application/json")
-//            setBody()
-        }
-
-    }
-
-
+//    LaunchedEffect(Unit) {
+//
+//        val output = client.post(url) {
+//            header("Content-Type", "application/json")
+////            setBody()
+//        }
+//
+//    }
 
 
 
-    NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
+
+
+
+
+    NavHost(navController = navController, startDestination = Screen.LoginScreen.route) {
         composable(route = Screen.LoginScreen.route) {
             LoginScreen(
                 onSignupClick = {
@@ -54,7 +62,8 @@ fun TodoApp() {
                             inclusive = true
                         }
                     }
-                }
+                },
+                onLoginSuccess = {}
             )
         }
 
@@ -66,7 +75,8 @@ fun TodoApp() {
                             inclusive = true
                         }
                     }
-                }
+                },
+                onSubmitClick = {}
             )
         }
 

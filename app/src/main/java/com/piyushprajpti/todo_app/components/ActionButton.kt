@@ -23,18 +23,22 @@ fun ActionButton(
     text: String,
     clickAction: () -> Unit
 ) {
-    Text(
-        text = text,
-        textAlign = TextAlign.Center,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 22.sp,
-        color = if (isSystemInDarkTheme()) Color.Black else Color.White,
+
+    TextButton(
+        onClick = { clickAction() },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 25.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(PrimaryColor)
-            .padding(vertical = 10.dp)
-            .clickable { clickAction() }
-    )
+    ) {
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 22.sp,
+            color = if (isSystemInDarkTheme()) Color.Black else Color.White,
+
+            )
+    }
 }

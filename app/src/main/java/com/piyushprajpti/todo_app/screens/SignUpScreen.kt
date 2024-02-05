@@ -12,10 +12,13 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -26,8 +29,24 @@ import com.piyushprajpti.todo_app.components.AlternateAction
 import com.piyushprajpti.todo_app.components.InputField
 
 @Composable
-fun SignUpScreen(onLoginClick: () -> Unit, modifier: Modifier = Modifier) {
+fun SignUpScreen(
+    onLoginClick: () -> Unit,
+    onSubmitClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
 
+    val name = remember {
+        mutableStateOf(TextFieldValue(""))
+    }
+    val email = remember {
+        mutableStateOf(TextFieldValue(""))
+    }
+    val password = remember {
+        mutableStateOf(TextFieldValue(""))
+    }
+    val confirmPassword = remember {
+        mutableStateOf(TextFieldValue(""))
+    }
 
     Column(
         modifier = modifier
@@ -46,21 +65,26 @@ fun SignUpScreen(onLoginClick: () -> Unit, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(30.dp))
 
         InputField(
+            value = name,
             logo = Icons.Default.Person,
             placeholder = "Your Name",
             keyboardType = KeyboardType.Text
         )
+
         InputField(
+            value = email,
             logo = Icons.Default.Email,
             placeholder = "Email Address",
             keyboardType = KeyboardType.Email
         )
         InputField(
+            value = password,
             logo = Icons.Default.Lock,
             placeholder = "Password",
             keyboardType = KeyboardType.Password
         )
         InputField(
+            value = confirmPassword,
             logo = Icons.Default.Lock,
             placeholder = "Confirm Password",
             keyboardType = KeyboardType.Password

@@ -1,6 +1,7 @@
 package com.piyushprajpti.todo_app.screens
 
 import android.service.autofill.OnClickAction
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,10 +15,14 @@ import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
@@ -25,10 +30,67 @@ import com.piyushprajpti.todo_app.Screen
 import com.piyushprajpti.todo_app.components.ActionButton
 import com.piyushprajpti.todo_app.components.AlternateAction
 import com.piyushprajpti.todo_app.components.InputField
+import com.piyushprajpti.todo_app.components.URL
 import com.piyushprajpti.todo_app.ui.theme.GrayColor
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.launch
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class LoginRequest(
+    @SerialName("email")
+    val email: String,
+    @SerialName("password")
+    val password: String
+)
 
 @Composable
-fun LoginScreen(onSignupClick: () -> Unit, modifier: Modifier = Modifier) {
+fun LoginScreen(
+    onSignupClick: () -> Unit,
+    onLoginSuccess: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val coroutine = rememberCoroutineScope()
+    val client = HttpClient(Android) {
+        install(ContentNegotiation) {
+            json()
+        }
+    }
+
+    val email = remember {
+        mutableStateOf(TextFieldValue(""))
+    }
+    val password = remember {
+        mutableStateOf(TextFieldValue(""))
+    }
+
+    fun onSubmit() {
+        coroutine.launch {
+            Log.d("TAG", "here")
+
+            val response: HttpResponse = client.post("http://localhost:8080/login") {
+                contentType(ContentType.Application.Json)
+                setBody(LoginRequest(email.value.text, password.value.text))
+            }
+
+            val body = response.bodyAsText()
+            Log.d("TAG", body)
+            if (true) {
+                onLoginSuccess()
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -52,17 +114,19 @@ fun LoginScreen(onSignupClick: () -> Unit, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(30.dp))
 
         InputField(
+            value = email,
             logo = Icons.Default.Email,
             placeholder = "Email Address",
             keyboardType = KeyboardType.Email
         )
         InputField(
+            value = password,
             logo = Icons.Default.Lock,
             placeholder = "Password",
             keyboardType = KeyboardType.Password
         )
 
-        ActionButton(text = "Log In", clickAction = {})
+        ActionButton(text = "Log In", clickAction = { onSubmit() })
 
         AlternateAction(
             text1 = "Don't have an Account?",

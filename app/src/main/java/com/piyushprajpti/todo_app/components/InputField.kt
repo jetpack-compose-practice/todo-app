@@ -17,6 +17,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.piyushprajpti.todo_app.ui.theme.GrayColor
@@ -33,14 +35,11 @@ import com.piyushprajpti.todo_app.ui.theme.PrimaryColor
 
 @Composable
 fun InputField(
+    value: MutableState<TextFieldValue>,
     logo: ImageVector,
     placeholder: String,
     keyboardType: KeyboardType
 ) {
-
-    val inputValue = remember {
-        mutableStateOf("")
-    }
 
     val isPswdVisible = remember {
         mutableStateOf(false)
@@ -54,9 +53,9 @@ fun InputField(
     ) {
         OutlinedTextField(
 
-            value = inputValue.value,
+            value = value.value,
 
-            onValueChange = { inputValue.value = it },
+            onValueChange = { value.value = it },
 
             placeholder = { Text(text = placeholder) },
 
