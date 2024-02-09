@@ -1,3 +1,3 @@
 package com.piyushprajpti.todo_app.components
 
-val URL = "http://127.0.0.1:8080"
+val URL = "https://hedgehog-wondrous-airedale.ngrok-free.app/"
