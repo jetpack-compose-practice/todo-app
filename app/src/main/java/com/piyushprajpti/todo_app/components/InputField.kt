@@ -93,7 +93,7 @@ fun InputField(
                             color = PrimaryColor
                         )
                         .padding(horizontal = 15.dp)
-                        .height(50.dp)
+                        .height(55.dp)
                 )
             },
 
@@ -128,7 +128,7 @@ fun InputField(
                     )
                 )
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(55.dp)
                 .align(Alignment.CenterVertically)
         )
 
