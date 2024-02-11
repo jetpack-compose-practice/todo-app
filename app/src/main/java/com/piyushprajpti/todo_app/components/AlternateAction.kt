@@ -47,7 +47,6 @@ fun AlternateAction(
             contentPadding = PaddingValues(horizontal = 1.dp, vertical = 1.dp),
             modifier = Modifier
                 .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
-                .background(Color.Green)
                 .clickable(
                     interactionSource = interactionSource,
                     indication = rememberRipple()

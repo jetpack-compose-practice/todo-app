@@ -35,6 +35,7 @@ import com.piyushprajpti.todo_app.components.ErrorField
 import com.piyushprajpti.todo_app.components.InputField
 import com.piyushprajpti.todo_app.components.URL
 import com.piyushprajpti.todo_app.components.getDataStore
+import com.piyushprajpti.todo_app.storage.UserData
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -87,7 +88,9 @@ fun SignUpScreen(
     val coroutine = rememberCoroutineScope()
 
     val context = LocalContext.current
-    context.getDataStore
+
+    val userData = UserData(context.getDataStore)
+
     val client = HttpClient(Android) {
         expectSuccess = false
         install(ContentNegotiation) {
@@ -140,6 +143,7 @@ fun SignUpScreen(
             }
 
             if (data.error == "") {
+                userData.setId(data.id)
                 onSignupSuccess()
             }
 

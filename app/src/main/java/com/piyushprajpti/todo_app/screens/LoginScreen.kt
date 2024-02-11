@@ -1,6 +1,5 @@
 package com.piyushprajpti.todo_app.screens
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -28,21 +27,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.preferencesDataStore
 import com.piyushprajpti.todo_app.components.ActionButton
 import com.piyushprajpti.todo_app.components.AlternateAction
 import com.piyushprajpti.todo_app.components.ErrorField
 import com.piyushprajpti.todo_app.components.InputField
 import com.piyushprajpti.todo_app.components.URL
 import com.piyushprajpti.todo_app.components.getDataStore
-import com.piyushprajpti.todo_app.preferences.UserPref
+import com.piyushprajpti.todo_app.storage.UserData
 import com.piyushprajpti.todo_app.ui.theme.GrayColor
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
-import io.ktor.client.plugins.ClientRequestException
-import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -85,6 +80,8 @@ fun LoginScreen(
 
     val context = LocalContext.current
 
+    val userData = UserData(context.getDataStore)
+
     val client = HttpClient(Android) {
         expectSuccess = false
         install(ContentNegotiation) {
@@ -102,12 +99,6 @@ fun LoginScreen(
     var data by remember {
         mutableStateOf(LoginResponse("", ""))
     }
-    val userPref = UserPref(context.getDataStore)
-    val id = userPref.getId().collectAsState(initial = "default")
-
-    LaunchedEffect(id.value) {
-        Log.d("output", id.value)
-    }
 
     fun onSubmit() {
         coroutine.launch {
@@ -124,16 +115,16 @@ fun LoginScreen(
                 }
 
                 data = response.body<LoginResponse>()
-                userPref.setId(data.id)
 
             } catch (error: Exception) {
                 LoginResponse(error = "Server Unreachable. Please try again.")
                 Log.d("output", error.stackTraceToString())
             }
 
-//            if (data.error == "") {
-//                onLoginSuccess()
-//            }
+            if (data.error == "") {
+                userData.setId(data.id)
+                onLoginSuccess()
+            }
 
         }
     }

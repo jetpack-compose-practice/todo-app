@@ -1,5 +1,6 @@
 package com.piyushprajpti.todo_app.screens
 
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,39 +24,118 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.piyushprajpti.todo_app.Screen
+import com.piyushprajpti.todo_app.components.URL
+import com.piyushprajpti.todo_app.components.getDataStore
+import com.piyushprajpti.todo_app.storage.UserData
 import com.piyushprajpti.todo_app.ui.theme.GrayColor
 import com.piyushprajpti.todo_app.ui.theme.PrimaryColor
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.launch
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import java.io.Serial
+
+@Serializable
+data class NoteData(
+    @SerialName("userid")
+    val userid: String,
+
+    @SerialName("noteid")
+    val noteid: String,
+
+    @SerialName("title")
+    val title: String,
+
+    @SerialName("description")
+    val description: String
+)
 
 @Composable
 fun NoteScreen(
-    navController: NavController,
-    title: String?,
-    description: String?
+    onBackClick: () -> Unit,
+    noteid: String?
 ) {
+
+    val coroutine = rememberCoroutineScope()
+
+    val context = LocalContext.current
+    val userData = UserData(context.getDataStore)
+    val userid = userData.getId().collectAsState(initial = "")
+
+    val client = HttpClient(Android) {
+        expectSuccess = false
+        install(ContentNegotiation) {
+            json(Json { ignoreUnknownKeys = true })
+        }
+    }
+
+    val title = remember {
+        mutableStateOf(TextFieldValue())
+    }
+
+    val description = remember {
+        mutableStateOf(TextFieldValue())
+    }
+
+    fun onSave() {
+        coroutine.launch {
+            try {
+                val response: HttpResponse = client.post("${URL}addnote") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        NoteData(
+                            userid = userid.value,
+                            noteid = noteid.toString(),
+                            title = "",
+                            description = ""
+                        )
+                    )
+                }
+
+
+            } catch (error: Exception) {
+                Log.d("output", error.stackTraceToString())
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             NoteScreenTopBar(
-                onBackClick = { navController.navigate(Screen.HomeScreen.route) },
+                onBackClick = { onBackClick() },
                 onDeleteClick = { /*TODO*/ },
-                onSaveClick = {})
+                onSaveClick = { onSave() }
+            )
         }
     ) { paddingValue ->
 
         Divider(modifier = Modifier.padding(paddingValue), thickness = 0.5.dp)
-
-//        Wrapper(modifier = Modifier.padding(paddingValue))
 
         Column(
             modifier = Modifier
@@ -64,11 +144,15 @@ fun NoteScreen(
                 .padding(horizontal = 15.dp)
         ) {
 
-            TextArea(placeholder = "Title", input = ""+title, modifier = Modifier)
+            TextArea(
+                placeholder = "Title",
+                input = title,
+                modifier = Modifier
+            )
 
             TextArea(
                 placeholder = "Description",
-                input = ""+description,
+                input = description,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -123,13 +207,9 @@ fun NoteScreenTopBar(
 @Composable
 fun TextArea(
     placeholder: String,
-    input: String,
+    input: MutableState<TextFieldValue>,
     modifier: Modifier = Modifier
 ) {
-
-    val inputValue = remember {
-        mutableStateOf(input)
-    }
 
     Row(
         modifier = Modifier
@@ -139,9 +219,9 @@ fun TextArea(
     ) {
         OutlinedTextField(
 
-            value = inputValue.value,
+            value = input.value,
 
-            onValueChange = { inputValue.value = it },
+            onValueChange = { input.value = it },
 
             placeholder = { Text(text = placeholder) },
 

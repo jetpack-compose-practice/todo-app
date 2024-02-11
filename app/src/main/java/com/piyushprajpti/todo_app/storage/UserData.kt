@@ -1,4 +1,4 @@
-package com.piyushprajpti.todo_app.preferences
+package com.piyushprajpti.todo_app.storage
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 val USER_KEY = stringPreferencesKey("id")
 
-class UserPref(private val dataStore: DataStore<Preferences>) {
+class UserData(private val dataStore: DataStore<Preferences>) {
     suspend fun setId(id: String) {
         dataStore.edit {
             it[USER_KEY] = id

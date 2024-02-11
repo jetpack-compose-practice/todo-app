@@ -30,6 +30,7 @@ import com.piyushprajpti.todo_app.ui.theme.TitleLight
 @Composable
 fun NoteBox(
     onClick: () -> Unit,
+    noteid: String,
     title: String,
     description: String
 ) {
