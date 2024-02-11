@@ -109,8 +109,7 @@ fun TodoApp() {
             composable(route = Screen.ProfileScreen.route) {
                 ProfileScreen(
                     onBackClick = { navController.navigate(Screen.HomeScreen.route) },
-                    name = "Piyush Prajapati",
-                    email = "piyushoa2004@gmail.com"
+                    onLogoutClick = {navController.navigate("auth_graph")}
                 )
             }
         }

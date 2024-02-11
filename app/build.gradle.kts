@@ -69,8 +69,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     
-    implementation("androidx.navigation:navigation-compose:2.7.6")
-    implementation("androidx.compose.material:material-icons-extended:1.6.0")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
     implementation("io.ktor:ktor-client-core:2.3.8")
@@ -80,4 +80,7 @@ dependencies {
 
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.8")
+
+    implementation("androidx.room:room-ktx:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
 }

@@ -80,6 +80,7 @@ fun HomeScreen(
     val context = LocalContext.current
     val userData = UserData(context.getDataStore)
     val userId = userData.getId().collectAsState(initial = "")
+//    Log.d("output", "HomeScreen: $userId")
 
     val notesList = remember {
         mutableStateOf<List<Note>>(emptyList())
@@ -94,11 +95,11 @@ fun HomeScreen(
 
                     setBody(RequestData(userId = userId.value))
                 }
-                Log.d("output", response.bodyAsText())
+//                Log.d("output", response.bodyAsText())
 
                 notesList.value = response.body<List<Note>>()
 
-                Log.d("output", notesList.toString())
+//                Log.d("output", notesList.toString())
 
             } catch (error: Exception) {
                 Log.d("output", error.stackTraceToString())

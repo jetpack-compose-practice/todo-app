@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -24,18 +25,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.piyushprajpti.todo_app.Screen
 import com.piyushprajpti.todo_app.components.ActionButton
-import com.piyushprajpti.todo_app.components.AlternateAction
+import com.piyushprajpti.todo_app.components.AlternateActionButton
 import com.piyushprajpti.todo_app.components.ErrorField
 import com.piyushprajpti.todo_app.components.InputField
 import com.piyushprajpti.todo_app.components.URL
 import com.piyushprajpti.todo_app.components.getDataStore
 import com.piyushprajpti.todo_app.storage.UserData
+import com.piyushprajpti.todo_app.ui.theme.GrayColor
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -43,7 +43,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -196,9 +195,17 @@ fun SignUpScreen(
 
         ActionButton(text = "Sign Up", clickAction = { onSubmit() })
 
-        AlternateAction(
-            text1 = "Already have an Account?",
-            text2 = "Login",
-            clickAction = { onLoginClick() })
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text(
+            text = "Already have an account?",
+            color = GrayColor,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+        AlternateActionButton(
+            text = "Login",
+            clickAction = { onLoginClick() }
+        )
     }
 }
