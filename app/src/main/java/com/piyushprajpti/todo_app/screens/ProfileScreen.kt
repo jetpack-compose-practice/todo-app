@@ -100,7 +100,7 @@ fun ProfileScreen(
         coroutine.launch { userData.setId("") }
     }
 
-    var data = remember {
+    val data = remember {
         mutableStateOf(UserInfo("", ""))
     }
 
