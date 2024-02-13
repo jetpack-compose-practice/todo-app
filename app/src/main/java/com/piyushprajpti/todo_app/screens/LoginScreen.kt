@@ -33,7 +33,7 @@ import com.piyushprajpti.todo_app.components.ErrorField
 import com.piyushprajpti.todo_app.components.InputField
 import com.piyushprajpti.todo_app.components.URL
 import com.piyushprajpti.todo_app.components.getDataStore
-import com.piyushprajpti.todo_app.storage.UserData
+import com.piyushprajpti.database.UserData
 import com.piyushprajpti.todo_app.ui.theme.GrayColor
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

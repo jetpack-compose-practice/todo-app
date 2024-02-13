@@ -1,28 +1,18 @@
 package com.piyushprajpti.todo_app
 
-import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.piyushprajpti.todo_app.components.getDataStore
 import com.piyushprajpti.todo_app.screens.HomeScreen
 import com.piyushprajpti.todo_app.screens.LoginScreen
 import com.piyushprajpti.todo_app.screens.NoteScreen
 import com.piyushprajpti.todo_app.screens.ProfileScreen
 import com.piyushprajpti.todo_app.screens.SignUpScreen
-import com.piyushprajpti.todo_app.storage.UserData
-import kotlinx.coroutines.flow.collect
 
 @Preview
 @Composable
@@ -83,25 +73,23 @@ fun TodoApp() {
                     },
                     onNoteBoxClick = { noteid ->
                         navController.navigate(
-                            Screen.NoteScreen.route + "?title=$noteid"
+                            Screen.NoteScreen.route + "?noteid=$noteid"
                         )
                     }
                 )
             }
 
             composable(
-                route = Screen.NoteScreen.route + "?title={noteid}",
+                route = Screen.NoteScreen.route + "?noteid={noteid}",
                 arguments = listOf(
                     navArgument("noteid") {
                         type = NavType.StringType
-                        defaultValue = ""
                         nullable = true
-
                     }
                 )
             ) {
                 NoteScreen(
-                    onBackClick = { navController.navigate(Screen.HomeScreen.route) },
+                    onBackClick = { navController.popBackStack() },
                     noteid = it.arguments?.getString("noteid")
                 )
             }

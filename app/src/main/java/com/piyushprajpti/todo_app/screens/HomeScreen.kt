@@ -1,6 +1,5 @@
 package com.piyushprajpti.todo_app.screens
 
-import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -17,16 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.piyushprajpti.database.Note
+import com.piyushprajpti.database.NotesDB
 import com.piyushprajpti.todo_app.R
-import com.piyushprajpti.todo_app.Screen
 import com.piyushprajpti.todo_app.components.AddNoteButton
 import com.piyushprajpti.todo_app.components.DefaultHomeScreenMsg
 import com.piyushprajpti.todo_app.components.NoteBox
 import com.piyushprajpti.todo_app.components.HomeScreenTopBar
 import com.piyushprajpti.todo_app.components.URL
 import com.piyushprajpti.todo_app.components.getDataStore
-import com.piyushprajpti.todo_app.storage.UserData
+import com.piyushprajpti.database.UserData
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -34,8 +33,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
-import io.ktor.client.statement.readText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -49,18 +46,19 @@ data class RequestData(
     @SerialName("userid")
     val userId: String
 )
-
-@Serializable
-data class Note(
-    @SerialName("_id")
-    val noteid: String,
-
-    @SerialName("title")
-    val title: String,
-
-    @SerialName("description")
-    val description: String
-)
+//
+//@Serializable
+//data class Note(
+//
+//    @SerialName("_id")
+//    val noteid: String,
+//
+//    @SerialName("title")
+//    val title: String,
+//
+//    @SerialName("description")
+//    val description: String
+//)
 
 @Composable
 fun HomeScreen(
@@ -71,7 +69,7 @@ fun HomeScreen(
     val coroutine = rememberCoroutineScope()
 
     val client = HttpClient(Android) {
-        expectSuccess = false
+        expectSuccess = true
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
         }
@@ -80,7 +78,8 @@ fun HomeScreen(
     val context = LocalContext.current
     val userData = UserData(context.getDataStore)
     val userId = userData.getId().collectAsState(initial = "")
-//    Log.d("output", "HomeScreen: $userId")
+
+    val noteDao = NotesDB.getDatabase(context).noteDao()
 
     val notesList = remember {
         mutableStateOf<List<Note>>(emptyList())
@@ -95,17 +94,19 @@ fun HomeScreen(
 
                     setBody(RequestData(userId = userId.value))
                 }
-//                Log.d("output", response.bodyAsText())
 
                 notesList.value = response.body<List<Note>>()
 
-//                Log.d("output", notesList.toString())
+                noteDao.insertAllNotes(notesList.value)
 
             } catch (error: Exception) {
                 Log.d("output", error.stackTraceToString())
             }
         }
+
     }
+
+    val notes = noteDao.getAllNotes().collectAsState(initial = emptyList())
 
     Scaffold(
 
@@ -128,17 +129,15 @@ fun HomeScreen(
 
         Divider(thickness = .5.dp, modifier = Modifier.padding(paddingValue))
 
-//
-
         Column(
             modifier = Modifier
                 .padding(paddingValue)
                 .padding(horizontal = 10.dp)
         ) {
-            if (notesList.value.isEmpty()) {
+            if (notes.value.isEmpty()) {
                 DefaultHomeScreenMsg(modifier = Modifier.padding(paddingValue))
             } else {
-                notesList.value.forEach { note ->
+                notes.value.forEach { note ->
                     NoteBox(
                         onClick = { onNoteBoxClick(note.noteid) },
                         noteid = note.noteid,

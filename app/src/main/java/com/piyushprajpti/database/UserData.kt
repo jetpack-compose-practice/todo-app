@@ -1,4 +1,4 @@
-package com.piyushprajpti.todo_app.storage
+package com.piyushprajpti.database
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

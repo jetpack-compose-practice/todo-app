@@ -39,11 +39,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.piyushprajpti.todo_app.Screen
+import com.piyushprajpti.database.Note
+import com.piyushprajpti.database.NotesDB
 import com.piyushprajpti.todo_app.components.URL
 import com.piyushprajpti.todo_app.components.getDataStore
-import com.piyushprajpti.todo_app.storage.UserData
+import com.piyushprajpti.database.UserData
 import com.piyushprajpti.todo_app.ui.theme.GrayColor
 import com.piyushprajpti.todo_app.ui.theme.PrimaryColor
 import io.ktor.client.HttpClient
@@ -55,11 +55,11 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.io.Serial
 
 @Serializable
 data class NoteData(
@@ -88,12 +88,15 @@ fun NoteScreen(
     val userData = UserData(context.getDataStore)
     val userid = userData.getId().collectAsState(initial = "")
 
+    val noteDao = NotesDB.getDatabase(context).noteDao()
+
     val client = HttpClient(Android) {
         expectSuccess = false
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
         }
     }
+
 
     val title = remember {
         mutableStateOf(TextFieldValue())
@@ -103,19 +106,32 @@ fun NoteScreen(
         mutableStateOf(TextFieldValue())
     }
 
+    if (noteid == null) {
+        title.value = TextFieldValue("")
+        description.value = TextFieldValue("")
+    } else {
+        Log.d("output", noteid)
+        val noteDetails =
+            noteDao.getNoteDetail(noteid).collectAsState(initial = Note("", "", "", ""))
+
+        title.value = TextFieldValue(noteDetails.value.title)
+        description.value = TextFieldValue(noteDetails.value.description)
+
+    }
+
     fun onSave() {
         coroutine.launch {
             try {
                 val response: HttpResponse = client.post("${URL}addnote") {
                     contentType(ContentType.Application.Json)
-                    setBody(
-                        NoteData(
-                            userid = userid.value,
-                            noteid = noteid.toString(),
-                            title = "",
-                            description = ""
-                        )
-                    )
+//                    setBody(
+//                        NoteData(
+//                            userid = userid.value,
+//                            noteid = noteid.toString(),
+//                            title = "",
+//                            description = ""
+//                        )
+//                    )
                 }
 
 
