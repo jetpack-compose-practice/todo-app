@@ -95,7 +95,6 @@ fun LoginScreen(
     val password = remember {
         mutableStateOf(TextFieldValue(""))
     }
-
     var data by remember {
         mutableStateOf(LoginResponse("", ""))
     }

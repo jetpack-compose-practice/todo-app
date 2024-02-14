@@ -90,6 +90,8 @@ fun TodoApp() {
             ) {
                 NoteScreen(
                     onBackClick = { navController.popBackStack() },
+                    onDeleteClick = { navController.popBackStack() },
+                    onSaveClick = { navController.popBackStack() },
                     noteid = it.arguments?.getString("noteid")
                 )
             }
@@ -97,7 +99,7 @@ fun TodoApp() {
             composable(route = Screen.ProfileScreen.route) {
                 ProfileScreen(
                     onBackClick = { navController.navigate(Screen.HomeScreen.route) },
-                    onLogoutClick = {navController.navigate("auth_graph")}
+                    onLogoutClick = { navController.navigate("auth_graph") }
                 )
             }
         }

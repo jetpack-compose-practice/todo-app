@@ -97,16 +97,16 @@ fun HomeScreen(
 
                 notesList.value = response.body<List<Note>>()
 
-                noteDao.insertAllNotes(notesList.value)
+//                noteDao.insertAllNotes(notesList.value)
 
             } catch (error: Exception) {
-                Log.d("output", error.stackTraceToString())
+                Log.d("output", "HOME SCREEN ERROR: ${error.stackTraceToString()}")
             }
         }
 
     }
 
-    val notes = noteDao.getAllNotes().collectAsState(initial = emptyList())
+//    val notes = noteDao.getAllNotes().collectAsState(initial = emptyList())
 
     Scaffold(
 
@@ -134,10 +134,10 @@ fun HomeScreen(
                 .padding(paddingValue)
                 .padding(horizontal = 10.dp)
         ) {
-            if (notes.value.isEmpty()) {
+            if (notesList.value.isEmpty()) {
                 DefaultHomeScreenMsg(modifier = Modifier.padding(paddingValue))
             } else {
-                notes.value.forEach { note ->
+                notesList.value.forEach { note ->
                     NoteBox(
                         onClick = { onNoteBoxClick(note.noteid) },
                         noteid = note.noteid,
