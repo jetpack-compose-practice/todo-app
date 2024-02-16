@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,9 +40,9 @@ import com.piyushprajpti.todo_app.ui.theme.PrimaryColor
 @Composable
 fun ActionButton(
     text: String,
+    isLoading: Boolean,
     clickAction: () -> Unit
 ) {
-    var isLoading by remember { mutableStateOf(false) }
 
     val infiniteTransition = rememberInfiniteTransition(label = "")
     val rotation by infiniteTransition.animateFloat(
@@ -56,7 +57,6 @@ fun ActionButton(
 
     TextButton(
         onClick = {
-            isLoading = !isLoading
             clickAction()
         },
         modifier = Modifier
@@ -64,20 +64,13 @@ fun ActionButton(
             .padding(vertical = 25.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(PrimaryColor),
-//        enabled = !isLoading
     ) {
         if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .rotate(rotation),
-                contentAlignment = Alignment.Center,
-            ) {
                 CircularProgressIndicator(
+                    modifier = Modifier.rotate(rotation).size(24.dp),
                     strokeWidth = 2.dp,
                     color = if (isSystemInDarkTheme()) Color.Black else Color.White
                 )
-            }
         } else {
             Text(
                 text = text,

@@ -3,6 +3,7 @@ package com.piyushprajpti.todo_app.screens
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
@@ -85,7 +86,7 @@ fun HomeScreen(
         mutableStateOf<List<Note>>(emptyList())
     }
 
-    LaunchedEffect(notesList) {
+    LaunchedEffect(Unit) {
         coroutine.launch {
             try {
 
@@ -129,21 +130,23 @@ fun HomeScreen(
 
         Divider(thickness = .5.dp, modifier = Modifier.padding(paddingValue))
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(paddingValue)
                 .padding(horizontal = 10.dp)
         ) {
-            if (notesList.value.isEmpty()) {
-                DefaultHomeScreenMsg(modifier = Modifier.padding(paddingValue))
-            } else {
-                notesList.value.forEach { note ->
-                    NoteBox(
-                        onClick = { onNoteBoxClick(note.noteid) },
-                        noteid = note.noteid,
-                        title = note.title,
-                        description = note.description
-                    )
+            item {
+                if (notesList.value.isEmpty()) {
+                    DefaultHomeScreenMsg(modifier = Modifier.padding(paddingValue))
+                } else {
+                    notesList.value.forEach { note ->
+                        NoteBox(
+                            onClick = { onNoteBoxClick(note.noteid) },
+                            noteid = note.noteid,
+                            title = note.title,
+                            description = note.description
+                        )
+                    }
                 }
             }
         }

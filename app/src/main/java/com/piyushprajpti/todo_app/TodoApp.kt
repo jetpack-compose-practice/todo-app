@@ -1,6 +1,8 @@
 package com.piyushprajpti.todo_app
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -8,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.piyushprajpti.database.UserData
+import com.piyushprajpti.todo_app.components.getDataStore
 import com.piyushprajpti.todo_app.screens.HomeScreen
 import com.piyushprajpti.todo_app.screens.LoginScreen
 import com.piyushprajpti.todo_app.screens.NoteScreen
@@ -20,7 +24,13 @@ fun TodoApp() {
 
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "auth_graph") {
+    val context = LocalContext.current
+    val userData = UserData(context.getDataStore)
+    val userid = userData.getId().collectAsState(initial = "")
+
+    val startDestination = if (userid.value.isEmpty()) "auth_graph" else "home_graph"
+
+    NavHost(navController = navController, startDestination = startDestination) {
 
         navigation(route = "auth_graph", startDestination = Screen.LoginScreen.route) {
 
@@ -61,8 +71,9 @@ fun TodoApp() {
                     }
                 )
             }
-        }
 
+
+        }
         navigation(route = "home_graph", startDestination = Screen.HomeScreen.route) {
 
             composable(route = Screen.HomeScreen.route) {
@@ -90,8 +101,8 @@ fun TodoApp() {
             ) {
                 NoteScreen(
                     onBackClick = { navController.popBackStack() },
-                    onDeleteClick = { navController.popBackStack() },
-                    onSaveClick = { navController.popBackStack() },
+                    onDeleteSuccess = { navController.popBackStack() },
+                    onSaveSuccess = { navController.popBackStack() },
                     noteid = it.arguments?.getString("noteid")
                 )
             }
@@ -103,6 +114,5 @@ fun TodoApp() {
                 )
             }
         }
-
     }
 }

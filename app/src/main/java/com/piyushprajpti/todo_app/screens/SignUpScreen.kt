@@ -114,7 +114,12 @@ fun SignUpScreen(
         mutableStateOf(SignupResponse("", ""))
     }
 
+    var isLoading by remember { mutableStateOf(false) }
+
+    if (data.error.length > 1) isLoading = false
+
     fun onSubmit() {
+        isLoading = true
         coroutine.launch {
 
             try {
@@ -142,6 +147,7 @@ fun SignUpScreen(
             }
 
             if (data.error == "") {
+                isLoading = true
                 userData.setId(data.id)
                 onSignupSuccess()
             }
@@ -193,7 +199,7 @@ fun SignUpScreen(
 
         ErrorField(errorText = data.error)
 
-        ActionButton(text = "Sign Up", clickAction = { onSubmit() })
+        ActionButton(text = "Sign Up", isLoading = isLoading, clickAction = { onSubmit() })
 
         Spacer(modifier = Modifier.height(20.dp))
 

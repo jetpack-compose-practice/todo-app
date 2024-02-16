@@ -1,6 +1,7 @@
 package com.piyushprajpti.todo_app.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,11 +26,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,17 +39,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.piyushprajpti.database.Note
-import com.piyushprajpti.database.NotesDB
 import com.piyushprajpti.database.UserData
 import com.piyushprajpti.todo_app.components.URL
 import com.piyushprajpti.todo_app.components.getDataStore
 import com.piyushprajpti.todo_app.ui.theme.GrayColor
 import com.piyushprajpti.todo_app.ui.theme.PrimaryColor
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
@@ -78,25 +78,31 @@ data class NoteData(
 )
 
 @Serializable
+data class NoteResponse(
+    @SerialName("title")
+    var title: String,
+
+    @SerialName("description")
+    var description: String
+)
+
+@Serializable
 data class NoteId(
-    @SerialName("_id") val noteid: String
+    @SerialName("noteid") val noteid: String
 )
 
 @Composable
 fun NoteScreen(
     onBackClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    onSaveClick: () -> Unit,
+    onDeleteSuccess: () -> Unit,
+    onSaveSuccess: () -> Unit,
     noteid: String?
 ) {
-
+    val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
 
-    val context = LocalContext.current
     val userData = UserData(context.getDataStore)
     val userid = userData.getId().collectAsState(initial = "")
-
-    val noteDao = NotesDB.getDatabase(context).noteDao()
 
     val client = HttpClient(Android) {
         expectSuccess = false
@@ -105,38 +111,19 @@ fun NoteScreen(
         }
     }
 
-
-    val title = remember {
-        mutableStateOf(TextFieldValue())
+    var note by remember {
+        mutableStateOf(NoteResponse("", ""))
     }
 
-    val description = remember {
-        mutableStateOf(TextFieldValue())
-    }
-
-    if (noteid == null) {
-        title.value = TextFieldValue("")
-        description.value = TextFieldValue("")
-    } else {
-        val noteDetails =
-            noteDao.getNoteDetail(noteid).collectAsState(initial = Note("", "", "", ""))
-
-        title.value = TextFieldValue(noteDetails.value.title)
-        description.value = TextFieldValue(noteDetails.value.description)
-
-    }
-
-    LaunchedEffect(Unit) {
-        coroutine.launch {
+    LaunchedEffect(noteid) {
+        noteid?.let {
             try {
                 val response: HttpResponse = client.post("${URL}fetchanote") {
                     contentType(ContentType.Application.Json)
-                    setBody { NoteId(noteid = noteid.toString()) }
-
+                    setBody( NoteId(noteid.toString()) )
                 }
-
+                note = response.body<NoteResponse>()
                 Log.d("output", "NoteScreen: noteidresponse: ${response.bodyAsText()}")
-
             } catch (error: Exception) {
                 Log.d("output", "NoteScreen: launchedeffecterror:  ${error.stackTraceToString()}")
             }
@@ -144,16 +131,20 @@ fun NoteScreen(
     }
 
     fun onDelete() {
+        if (noteid.isNullOrEmpty()) {
+            Toast.makeText(context, "Error: Not never saved", Toast.LENGTH_LONG).show()
+            return
+        }
         coroutine.launch {
             try {
                 val response: HttpResponse = client.post("${URL}deletenote") {
                     contentType(ContentType.Application.Json)
-                    setBody { { noteid } }
+                    setBody ( NoteId(noteid.toString()) )
                 }
 
                 Log.d("output", "onDelete: ${response.bodyAsText()}")
 
-                onDeleteClick()
+                onDeleteSuccess()
 
             } catch (error: Exception) {
                 Log.d("output", "onDeleteError: ${error.stackTraceToString()}")
@@ -162,26 +153,28 @@ fun NoteScreen(
     }
 
     fun onSave() {
+        if (note.title.isEmpty() && note.description.isEmpty()) {
+            Toast.makeText(context, "Error: Empty Field", Toast.LENGTH_LONG).show()
+            return
+        }
         coroutine.launch {
-
-            Log.d("output", "onSave: noteid: $noteid")
             try {
+                val noteData = NoteData(
+                    userid = userid.value,
+                    noteid = noteid ?: "",
+                    title = note.title,
+                    description = note.description
+                )
+                Log.d("output", "onSave: Noteid: $noteid")
                 val response: HttpResponse = client.post("${URL}addnote") {
                     contentType(ContentType.Application.Json)
-                    setBody(
-                        NoteData(
-                            userid = userid.value,
-                            noteid = noteid ?: "",
-                            title = title.value.text,
-                            description = description.value.text
-                        )
-                    )
+                    setBody(noteData)
                 }
 
-                Log.d("output", "onSaveError: ${response.bodyAsText()}")
+                Log.d("output", "onSave: $noteData")
+                Log.d("output", "onSave: ${response.bodyAsText()}")
 
-                onSaveClick()
-
+                onSaveSuccess()
 
             } catch (error: Exception) {
                 Log.d("output", error.stackTraceToString())
@@ -210,13 +203,15 @@ fun NoteScreen(
 
             TextArea(
                 placeholder = "Title",
-                input = title,
+                value = note.title,
+                onValueChange = { note = note.copy(title = it) },
                 modifier = Modifier
             )
 
             TextArea(
                 placeholder = "Description",
-                input = description,
+                value = note.description,
+                onValueChange = { note = note.copy(description = it) },
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -271,7 +266,8 @@ fun NoteScreenTopBar(
 @Composable
 fun TextArea(
     placeholder: String,
-    input: MutableState<TextFieldValue>,
+    value: String,
+    onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -283,9 +279,9 @@ fun TextArea(
     ) {
         OutlinedTextField(
 
-            value = input.value,
+            value = value,
 
-            onValueChange = { input.value = it },
+            onValueChange = { onValueChange(it) },
 
             placeholder = { Text(text = placeholder) },
 

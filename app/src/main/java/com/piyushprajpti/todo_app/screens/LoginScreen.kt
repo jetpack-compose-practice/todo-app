@@ -95,11 +95,17 @@ fun LoginScreen(
     val password = remember {
         mutableStateOf(TextFieldValue(""))
     }
+
     var data by remember {
         mutableStateOf(LoginResponse("", ""))
     }
 
+    var isLoading by remember { mutableStateOf(false) }
+
+    if (data.error.length > 1) isLoading = false
+
     fun onSubmit() {
+        isLoading = true
         coroutine.launch {
 
             try {
@@ -164,7 +170,7 @@ fun LoginScreen(
 
         ErrorField(errorText = data.error)
 
-        ActionButton(text = "Log In", clickAction = { onSubmit() })
+        ActionButton(text = "Log In", isLoading = isLoading, clickAction = { onSubmit() })
 
         Spacer(modifier = Modifier.height(20.dp))
 
