@@ -7,13 +7,8 @@ sealed class Screen(val route: String) {
     data object NoteScreen : Screen("noteScreen")
     data object NoteBox : Screen("notebox")
     data object ProfileScreen : Screen("profilescreen")
+    data object ResetPasswordScreen : Screen("resetpasswordscreen")
+    data object OtpScreen : Screen("otpscreen")
+    data object UpdatePasswordScreen : Screen("updatepasswordscreen")
 
-//    fun withArgs(vararg args: String?): String {
-//        return buildString {
-//            append(route)
-//            args.forEach { arg ->
-//                append("{$arg}")
-//            }
-//        }
-//    }
 }

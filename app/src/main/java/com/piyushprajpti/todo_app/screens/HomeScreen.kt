@@ -80,7 +80,6 @@ fun HomeScreen(
     val userData = UserData(context.getDataStore)
     val userId = userData.getId().collectAsState(initial = "")
 
-    val noteDao = NotesDB.getDatabase(context).noteDao()
 
     val notesList = remember {
         mutableStateOf<List<Note>>(emptyList())

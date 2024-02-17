@@ -132,7 +132,7 @@ fun NoteScreen(
 
     fun onDelete() {
         if (noteid.isNullOrEmpty()) {
-            Toast.makeText(context, "Error: Not never saved", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Error: Note never saved", Toast.LENGTH_LONG).show()
             return
         }
         coroutine.launch {

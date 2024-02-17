@@ -147,8 +147,8 @@ fun SignUpScreen(
             }
 
             if (data.error == "") {
-                isLoading = true
                 userData.setId(data.id)
+                userData.setEmail(email.value.text)
                 onSignupSuccess()
             }
 

@@ -15,8 +15,11 @@ import com.piyushprajpti.todo_app.components.getDataStore
 import com.piyushprajpti.todo_app.screens.HomeScreen
 import com.piyushprajpti.todo_app.screens.LoginScreen
 import com.piyushprajpti.todo_app.screens.NoteScreen
+import com.piyushprajpti.todo_app.screens.OtpScreen
 import com.piyushprajpti.todo_app.screens.ProfileScreen
+import com.piyushprajpti.todo_app.screens.ResetPasswordScreen
 import com.piyushprajpti.todo_app.screens.SignUpScreen
+import com.piyushprajpti.todo_app.screens.UpdatePassword
 
 @Preview
 @Composable
@@ -49,6 +52,9 @@ fun TodoApp() {
                                 inclusive = false
                             }
                         }
+                    },
+                    onResetPasswordClick = {
+                        navController.navigate(Screen.ResetPasswordScreen.route)
                     }
                 )
             }
@@ -72,6 +78,48 @@ fun TodoApp() {
                 )
             }
 
+            composable(route = Screen.ResetPasswordScreen.route) {
+                ResetPasswordScreen(
+                    onLoginClick = {
+                        navController.navigate(Screen.LoginScreen.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    onResetSuccess = {
+                        navController.navigate(Screen.OtpScreen.route)
+                    }
+                )
+            }
+
+            composable(route = Screen.OtpScreen.route) {
+                OtpScreen(
+                    onLoginClick = {
+                        navController.navigate(Screen.LoginScreen.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                        }
+                    },
+
+                    onOtpSuccess = {
+                        navController.navigate(Screen.UpdatePasswordScreen.route)
+                    }
+                )
+            }
+
+            composable(route = Screen.UpdatePasswordScreen.route) {
+                UpdatePassword(
+                    onLoginClick = {
+                        navController.navigate(Screen.LoginScreen.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
 
         }
         navigation(route = "home_graph", startDestination = Screen.HomeScreen.route) {
